@@ -99,10 +99,10 @@ export default function Introduce() {
      
   return (
     <div>
-        <div className='flex px-4 flex-col'>
+        <div className='flex px-4 flex-col bg-white'>
             
         <Tabs
-            className="w-full custom-tabs 1text-xs !font-medium"
+            className="w-full custom-tabs text-xs !font-medium"
             activeKey={activeKey}
             onChange={(key)=>{
               setActiveKey(key)

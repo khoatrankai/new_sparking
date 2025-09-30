@@ -234,7 +234,7 @@ export default function BodyWork() {
         <div className='flex px-4'>
         
         <Tabs
-            className="w-full custom-tabs 1text-xs !font-medium"
+            className="w-full custom-tabs text-xs !font-medium"
             
             items={type ==='kanban'? tabsType:type === "gantt"?tabsGantt:tabs}
             onChange={(e)=>{

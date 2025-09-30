@@ -3,7 +3,7 @@ import { toggleMenu } from "@/redux/store/slices/menu.slice";
 import { AppDispatch, RootState } from "@/redux/store/store";
 // import { Avatar } from "antd";
 import Image from "next/image";
-import React from "react";
+import React, { Ref, useRef } from "react";
 import { FaBell, FaUser } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import { useSelector } from "react-redux";
@@ -13,17 +13,46 @@ import Notify from "../Notify/Notify";
 import { Button } from "../ui/button";
 import { Bell, ChevronDown, Home, MessageSquare, Search, Target } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import ModalUpdateUser from "../v2/User/Tool/Modal/ModalUpdateUser/ModalUpdateUser";
+import ModalChangePassword from "../v2/User/Tool/Modal/ModalChangePassword";
+import usePostData from "@/hooks/usePostData";
+import userService from "@/services/userService";
+import { fetchUserProfile } from "@/redux/store/slices/userSlices/get_profile.slice";
+import { useRouter } from "next/navigation";
 
 // type Props = {};
 
 const Header = () => {
+  const {postdata} = usePostData()
+  const router = useRouter()
   const dispatch = useDispatch<AppDispatch>();
+  const refBtnProfile = useRef<HTMLButtonElement>();
+  const refBtnPassword = useRef<HTMLButtonElement>();
   const { datas: dataProfile } = useSelector(
     (state: RootState) => state.get_profile
+  );
+  const { datas: dataProject } = useSelector(
+    (state: RootState) => state.get_projects
   );
   const { datas: countNotify } = useSelector(
     (state: RootState) => state.get_count_notify
   );
+  const handleLogout = async () => {
+    const statusCode = await postdata(() => userService.logoutUser());
+    if (statusCode === 200) {
+      dispatch(fetchUserProfile())
+        .unwrap()
+        .then((dt) => {
+          if (dt.statusCode === 400) {
+            router.push("/login");
+          }
+        })
+        .catch(() => {
+          router.push("/login");
+        });
+    }
+  };
   return (
     // <div className="min-h-16 z-50 relative">
     //   <div className="h-16 bg-white px-4 flex justify-between items-center fixed inset-x-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px]">
@@ -92,7 +121,7 @@ const Header = () => {
 
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-primary-foreground/10 p-2"
@@ -100,8 +129,8 @@ const Header = () => {
               title="Tìm kiếm"
             >
               <Search className="w-5 h-5" />
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-primary-foreground/10 p-2"
@@ -109,12 +138,12 @@ const Header = () => {
               title="Mục tiêu"
             >
               <Target className="w-5 h-5" />
-            </Button>
+            </Button> */}
             <Button
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-primary-foreground/10 p-2"
-              onClick={()=>{}}
+              onClick={()=>{router.push('/')}}
               title="Trang chủ"
             >
               <Home className="w-5 h-5" />
@@ -123,7 +152,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               className="text-primary-foreground hover:bg-primary-foreground/10 p-2"
-              onClick={()=>{}}
+              onClick={()=>{router.push(`/chat`)}}
               title="Tin nhắn"
             >
               <MessageSquare className="w-5 h-5" />
@@ -131,27 +160,60 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary-foreground hover:bg-primary-foreground/10 p-2 relative"
+              className="text-primary-foreground hover:bg-primary-foreground/10 p-2 relative group"
               onClick={()=>{}}
               title="Thông báo"
             >
               <Bell className="w-5 h-5" />
               <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-medium">
-                3
+                {countNotify}
+              </div>
+              <div className="absolute max-w-96 w-96 h-fit right-0 top-full z-50 bg-white invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
+                <Notify />
               </div>
             </Button>
           </nav>
-
-          <div className="flex items-center gap-2">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-secondary text-secondary-foreground">U</AvatarFallback>
-            </Avatar>
-            <ChevronDown className="w-4 h-4" />
-          </div>
+<DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                     <div className="flex items-center gap-2">
+                                <Avatar className="w-8 h-8">
+                                  <AvatarImage src={dataProfile?.picture_url} />
+                                  <AvatarFallback className="bg-secondary text-secondary-foreground">U</AvatarFallback>
+                                </Avatar>
+                                <ChevronDown className="w-4 h-4" />
+                                
+                              </div>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => {
+                                      refBtnProfile.current?.click();
+                                    }}>
+                                      📂 Hồ sơ
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => refBtnPassword.current?.click()}>
+                                      🔐 Đổi mật khẩu
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      onClick={() => {
+                                        handleLogout()
+                                      }} 
+                                      className="text-red-500"
+                                    >
+                                      ◀️ Thoát
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+         
         </div>
       </header>
       </div>
+      <ModalUpdateUser
+        ID={dataProfile?.user_id as string}
+        refBtnUser={refBtnProfile as Ref<HTMLButtonElement>}
+      />
+      <ModalChangePassword
+        refBtnUser={refBtnPassword as Ref<HTMLButtonElement>}
+      />
       </div>
      
   );

@@ -489,7 +489,9 @@ const router = useRouter()
                      
                       <td className="table-cell">
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Xem chi tiết">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Xem chi tiết" onClick={()=>{
+                            router.push(`/project/info/${task?.project_id}`)
+                          }}>
                             <Eye className="w-4 h-4 text-primary" />
                           </Button>
                           <Button

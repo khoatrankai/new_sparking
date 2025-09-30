@@ -56,17 +56,17 @@ export default function Introduce() {
    
         return <div className='flex gap-1 items-center'>
             <Popover content={<ModalStatus fetchData={fetchData} work={dataWork as IGetWork2}/>}>
-            <Button className='flex flex-col items-center justify-center h-16' type='text'>
+            <Button className='flex flex-col items-center justify-center !h-20' type='text'>
             <TbStatusChange className='text-xl'/>
             <span className='text-xs font-medium'>Trạng thái</span>
             </Button>
             </Popover>
            
-            <Button className='flex flex-col items-center justify-center h-16' type='text' onClick={()=>{refBtn.current?.click()}}>
+            <Button className='flex flex-col items-center justify-center !h-20' type='text' onClick={()=>{refBtn.current?.click()}}>
             <PiUserListBold className='text-xl'/>
             <span className='text-xs font-medium'>Thực hiện</span>
             </Button>
-            <Button className='flex flex-col items-center justify-center h-16' type='text' onClick={()=>{refBtnListTask.current?.click()}}>
+            <Button className='flex flex-col items-center justify-center !h-20' type='text' onClick={()=>{refBtnListTask.current?.click()}}>
             <FaClipboardList className='text-xl'/>
             <span className='text-xs font-medium'>Đầu việc</span>
             </Button>
@@ -79,12 +79,12 @@ export default function Introduce() {
               <>
                {
                 dataReview.length > 0 ? 
-                <Button className='flex flex-col items-center justify-center h-16' type='text'  onClick={()=>{refBtnHistoryReview.current?.click()}}>
+                <Button className='flex flex-col items-center justify-center !h-20' type='text'  onClick={()=>{refBtnHistoryReview.current?.click()}}>
                   <FaHistory className='text-xl'/>
                   <span className='text-xs font-medium'>Lịch sử đánh giá</span>
                 </Button>
                 :
-                <Button className='flex flex-col items-center justify-center h-16' type='text' onClick={()=>{refBtnAddReview.current?.click()}}>
+                <Button className='flex flex-col items-center justify-center !h-20' type='text' onClick={()=>{refBtnAddReview.current?.click()}}>
                 <MdOutlineReviews className='text-xl'/>
                 <span className='text-xs font-medium'>Đánh giá</span>
                 </Button>
@@ -92,7 +92,7 @@ export default function Introduce() {
               </>:<>
               {
                  dataReview.length > 0 ? 
-                 <Button className='flex flex-col items-center justify-center h-16' type='text'  onClick={()=>{refBtnHistoryReview.current?.click()}}>
+                 <Button className='flex flex-col items-center justify-center !h-20' type='text'  onClick={()=>{refBtnHistoryReview.current?.click()}}>
                    <FaHistory className='text-xl'/>
                    <span className='text-xs font-medium'>Lịch sử đánh giá</span>
                  </Button>
@@ -128,10 +128,10 @@ export default function Introduce() {
      
   return (
     <div>
-        <div className='flex px-4 flex-col'>
+        <div className='flex px-4 flex-col bg-white'>
             
         <Tabs
-            className="w-full custom-tabs 1text-xs !font-medium"
+            className="w-full custom-tabs text-xs !font-medium"
             
             items={tabs}
            

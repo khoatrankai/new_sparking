@@ -380,13 +380,14 @@ const router = useRouter()
   
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="text-xs bg-transparent" onClick={()=>{
-                router.push('management/work')
+                router.push('/work')
               }}>
                 <List className="w-4 h-4 mr-1" />
                 Danh sách
               </Button>
               <Button variant="outline" size="sm" className="text-xs bg-transparent"onClick={()=>{
-                router.push(`/management/all_work?type_tab=kanban&id=${dataType[0].type_work_id}`)
+                console.log("bam ne")
+                router.push(`/management/all_work?type_tab=kanban&id=${dataType?.[0]?.type_work_id}`)
               }}>
                 <Kanban className="w-4 h-4 mr-1" />
                 Kanban
@@ -508,7 +509,7 @@ const router = useRouter()
                       </td>
                       <td className="table-cell">
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Xem chi tiết">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Xem chi tiết" onClick={()=>{router.push(`/management/detail_work?id=${task.work_id}`)}}>
                             <Eye className="w-4 h-4 text-primary" />
                           </Button>
                           <Button
