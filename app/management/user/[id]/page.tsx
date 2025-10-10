@@ -13,6 +13,7 @@ import { IDocuments, InfoUser, ISkills } from "@/models/userInterface"
 import { useParams, useSearchParams } from "next/navigation"
 import userService from "@/services/userService"
 import activityService from "@/services/activityService"
+import ReportWork from "@/components/Reports/ReportWork/ReportWork"
 // const mockData = [
 //   { 'Thành phần': 'Design', type: 'Điểm yêu cầu', 'Điểm': 70 },
 //   { 'Thành phần': 'Design', type: 'Điểm đạt được', 'Điểm': 30 },
@@ -37,6 +38,7 @@ import activityService from "@/services/activityService"
 // ];
 export default function HRProfilePage() {
   const {id} = useParams()
+  const [activeTab,setActiveTab] = useState<any>('info')
   const [mockData,setMockData] = useState<any>([])
   const [tasks,setTasks] = useState<any>([])
   const [dataEfficiency,setDataEfficiency] = useState<any>()
@@ -99,7 +101,8 @@ export default function HRProfilePage() {
 // ]
   // Tab navigation
   const tabs = [
-    { name: "Thông tin chung", active: true },
+    { name: "Thông tin chung",name_tag:'info', active: true },
+    { name: "Báo cáo công việc",name_tag:'report', active: false },
     // { name: "Sơ yếu lý lịch", active: false },
     // { name: "Công việc & Hợp đồng", active: false },
     // { name: "Bảo hiểm & Phúc lợi", active: false },
@@ -207,16 +210,18 @@ export default function HRProfilePage() {
                 className={`px-4 py-2 font-medium ${
                   tab.active ? "text-primary border-b-2 border-primary" : "text-gray-600 hover:text-gray-900"
                 }`}
+                onClick={()=>{
+                    setActiveTab(tab.name_tag)
+                }}
               >
                 {tab.name}
               </button>
             ))}
           </div>
         </div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Employee Profile */}
+        {
+          activeTab === "info" &&
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card>
             <CardContent className="p-6">
               <div className="text-center mb-6">
@@ -230,8 +235,6 @@ export default function HRProfilePage() {
                 <p className="text-sm text-gray-500">{dataUser?.group_user?.name_group}</p>
                 <Button className="mt-4 bg-primary hover:bg-primary/90">Đang làm việc</Button>
               </div>
-
-              {/* Contact Information */}
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900 mb-3">Thông tin nhân sự</h3>
 
@@ -240,12 +243,6 @@ export default function HRProfilePage() {
                   <span className="text-gray-600">Email</span>
                   <span className="ml-auto text-gray-900">{dataUser?.email}</span>
                 </div>
-
-                {/* <div className="flex items-center gap-3 text-sm">
-                  <Phone className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">Ngày sinh</span>
-                  <span className="ml-auto text-gray-900">{new Date(dataUser?.)}</span>
-                </div> */}
 
                 <div className="flex items-center gap-3 text-sm">
                   <Phone className="w-4 h-4 text-gray-400" />
@@ -258,63 +255,20 @@ export default function HRProfilePage() {
                   <span className="text-gray-600">Facebook</span>
                   <span className="ml-auto text-gray-900">{dataUser?.link_facebook}</span>
                 </div>
-
-                {/* <div className="flex items-center gap-3 text-sm">
-                  <User className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">Giới tính</span>
-                  <span className="ml-auto text-gray-900">{employee.contact.gender}</span>
-                </div> */}
               </div>
             </CardContent>
           </Card>
-
-          {/* Skills and Performance */}
           <div className="space-y-6">
-            {/* Skills Radar Chart */}
             <Card>
               <CardHeader>
                 <CardTitle>Kỹ năng làm việc</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="relative w-64 h-64 mx-auto">
-                  {/* <svg className="w-full h-full" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="80" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-                    <circle cx="100" cy="100" r="60" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-                    <circle cx="100" cy="100" r="40" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-                    <circle cx="100" cy="100" r="20" fill="none" stroke="#E5E7EB" strokeWidth="1" />
-                    <line x1="100" y1="20" x2="100" y2="180" stroke="#E5E7EB" strokeWidth="1" />
-                    <line x1="20" y1="100" x2="180" y2="100" stroke="#E5E7EB" strokeWidth="1" />
-                    <line x1="40" y1="40" x2="160" y2="160" stroke="#E5E7EB" strokeWidth="1" />
-                    <line x1="160" y1="40" x2="40" y2="160" stroke="#E5E7EB" strokeWidth="1" />
-                    <polygon
-                      points="100,30 150,50 160,100 140,150 60,160 40,120"
-                      fill="rgba(59, 130, 246, 0.2)"
-                      stroke="#3B82F6"
-                      strokeWidth="2"
-                    />
-                    <circle cx="100" cy="30" r="3" fill="#3B82F6" />
-                    <circle cx="150" cy="50" r="3" fill="#3B82F6" />
-                    <circle cx="160" cy="100" r="3" fill="#3B82F6" />
-                    <circle cx="140" cy="150" r="3" fill="#3B82F6" />
-                    <circle cx="60" cy="160" r="3" fill="#3B82F6" />
-                    <circle cx="40" cy="120" r="3" fill="#3B82F6" />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-xs text-gray-600 space-y-1">
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">Lãnh đạo</div>
-                      <div className="absolute top-1/4 -right-8">Giao tiếp</div>
-                      <div className="absolute top-1/2 -right-12 transform -translate-y-1/2">Sáng tạo</div>
-                      <div className="absolute bottom-1/4 -right-8">Bán hàng</div>
-                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">Quản lý</div>
-                      <div className="absolute top-1/2 -left-12 transform -translate-y-1/2">Phân tích</div>
-                    </div>
-                  </div> */}
                   <RadarChart data={mockData} />
                 </div>
               </CardContent>
             </Card>
-
-            {/* Work Performance */}
                      <Card>
               <CardHeader>
                 <CardTitle>Tiến trình tiếp nhận hồ sơ</CardTitle>
@@ -340,19 +294,14 @@ export default function HRProfilePage() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Achievements and Progress */}
           <div className="space-y-6">
-            {/* Achievement Progress */}
             
-
                <Card>
               <CardHeader>
                 <CardTitle>Ý thức làm việc</CardTitle>
               </CardHeader>
               <CardContent>
                  <div className="space-y-4">
-              {/* {performanceData.map((item, index) => ( */}
                 <div key={0} className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-card-foreground">Ngày công</span>
@@ -388,11 +337,9 @@ export default function HRProfilePage() {
                   </div>
                   <Progress value={dataUser?.number_overtime} className="h-2" />
                 </div>
-              {/* ))} */}
             </div>
               </CardContent>
             </Card>
-            {/* Development Progress */}
            <Card>
               <CardHeader>
                 <CardTitle>Hiệu quả công việc</CardTitle>
@@ -404,7 +351,6 @@ export default function HRProfilePage() {
                     <p className="text-sm text-gray-600">việc</p>
                   </div>
 
-                  {/* {achievements.map((achievement, index) => ( */}
                     <div key={0} className="flex items-center gap-3">
                       <div className="w-4 h-4 rounded-full bg-teal-500"></div>
                       <div className="flex-1">
@@ -453,12 +399,17 @@ export default function HRProfilePage() {
                         </div>
                       </div>
                     </div>
-                  {/* ))} */}
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+        }
+        {
+          activeTab === "report" &&
+          <ReportWork/>
+        }
+       
       </div>
     // </DashboardLayout>
   )

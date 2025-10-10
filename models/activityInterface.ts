@@ -195,6 +195,9 @@ export interface IGetWork {
   updated_at: Date;
   urgent: boolean;
   tasks?: IGetTask[];
+  solution?:string,
+  completed?:string,
+  uncompleted?:string,
   picture_urls?: IGetPictureWork[];
   user_create?:InfoUser
   list_user?: {
@@ -217,6 +220,9 @@ export interface IGetWork2 {
   time_end: Date;
   created_at: Date;
   urgent?: boolean;
+  solution?:string,
+  completed?:string,
+  uncompleted?:string,
   tasks?: IGetTask[];
   updated_at: Date;
   picture_urls?: IGetPictureWork[];

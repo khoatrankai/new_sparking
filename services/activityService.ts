@@ -208,6 +208,33 @@ const activityService = {
       throw error;
     }
   },
+  getAllWorksFilterByUser: async (filters?: {
+    date_start?: string;
+    date_end?: string;
+    contract?: string;
+    user?:string
+    type?: "date"|"week" | "month" | "year";
+    export?: boolean;
+  }) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+      const response = await api.get(
+        `/activity/work-filter-by-user?${queryParams.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
   getAllWorksUrgent: async (filters?: {
     group_user?: string;
     project?: string;

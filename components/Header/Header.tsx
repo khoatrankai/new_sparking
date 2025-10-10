@@ -20,6 +20,9 @@ import usePostData from "@/hooks/usePostData";
 import userService from "@/services/userService";
 import { fetchUserProfile } from "@/redux/store/slices/userSlices/get_profile.slice";
 import { useRouter } from "next/navigation";
+// import { exportToWord } from "@/lib/ReportDay/docx";
+// import { exportToExcel } from "@/lib/ReportDay/excel";
+// import { exportToPDF } from "@/lib/ReportDay/pdf";
 
 // type Props = {};
 
@@ -27,8 +30,8 @@ const Header = () => {
   const {postdata} = usePostData()
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>();
-  const refBtnProfile = useRef<HTMLButtonElement>();
-  const refBtnPassword = useRef<HTMLButtonElement>();
+  const refBtnProfile = useRef<HTMLButtonElement>(null);
+  const refBtnPassword = useRef<HTMLButtonElement>(null);
   const { datas: dataProfile } = useSelector(
     (state: RootState) => state.get_profile
   );

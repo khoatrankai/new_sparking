@@ -17,24 +17,42 @@ import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
 import { IGetWork2 } from "@/models/activityInterface";
-import { fetchWorksFilter } from "@/redux/store/slices/activitySlices/work_filter.slide";
+// import { fetchWorksFilter } from "@/redux/store/slices/activitySlices/work_filter.slide";
 import Excel from "./Export/Excel";
 import { FaRegFileExcel } from "react-icons/fa";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { fetchWorksFilterByUser } from "@/redux/store/slices/activitySlices/work_filter_by_user.slide";
+import { useParams } from "next/navigation";
+import { exportToExcel } from "@/lib/ReportDay/excel";
+import { exportToWord } from "@/lib/ReportDay/docx";
+import { exportToPDF } from "@/lib/ReportDay/pdf";
+import { exportToExcelWeek } from "@/lib/ReportWeek/excel";
+import { exportToWordWeek } from "@/lib/ReportWeek/docx";
+import { exportToPDFWeek } from "@/lib/ReportWeek/pdf";
 // import exportToPDF from "./Export/PDF";
 export default function ReportWork() {
+    const {id} = useParams()
   const [timeFirst, setTimeFirst] = useState<number | undefined>(
     new Date("2024-12-01").getTime()
   );
   const [timeEnd, setTimeEnd] = useState<number | undefined>(
     new Date("2024-12-31").getTime()
   );
+  const weekdays = [
+  "Chủ nhật",
+  "Thứ hai",
+  "Thứ ba",
+  "Thứ tư",
+  "Thứ năm",
+  "Thứ sáu",
+  "Thứ bảy",
+];
   const [pageLimit, setPageLimit] = useState<number>(25);
-  const [typeTime, setTypeTime] = useState<"week" | "month" | "year">("year");
-  const { RangePicker } = DatePicker;
+  const [typeTime, setTypeTime] = useState< "date"|"week" | "month" | "year">("year");
+  // const { RangePicker } = DatePicker;
   const dispatch = useDispatch<AppDispatch>();
   const { datas: dataSource } = useSelector(
-    (state: RootState) => state.get_works_filter
+    (state: RootState) => state.get_works_filter_by_user
   );
 
   const [dataFilter, setDataFilter] = useState<IGetWork2[] | [] | undefined>();
@@ -44,10 +62,27 @@ export default function ReportWork() {
       key: "excel",
       icon: <FaRegFileExcel />,
     },
+    {
+      label: "PDF",
+      key: "pdf",
+      icon: <FaRegFileExcel />,
+    },
+    {
+      label: "Word",
+      key: "word",
+      icon: <FaRegFileExcel />,
+    },
   ];
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     if (e.key === "excel") {
       ExportExcel();
+    }
+    if (e.key === "word") {
+      ExportWord();
+    }
+
+    if (e.key === "pdf") {
+      ExportPDF();
     }
   };
   const menuProps = {
@@ -57,6 +92,9 @@ export default function ReportWork() {
   const columns: TableColumnsType<IGetWork2> = [
     {
       title:
+      typeTime === "date"
+          ? "Ngày"
+          :
         typeTime === "month"
           ? "Tháng/Năm"
           : typeTime === "week"
@@ -137,7 +175,8 @@ export default function ReportWork() {
 
   useEffect(() => {
     dispatch(
-      fetchWorksFilter({
+      fetchWorksFilterByUser({
+        user:id as string,
         date_start: timeFirst ? timeFirst.toString() : undefined,
         date_end: timeEnd ? timeEnd.toString() : undefined,
         type: typeTime,
@@ -168,38 +207,179 @@ export default function ReportWork() {
   };
 
   const ExportExcel = () => {
-    const customeData = dataFilter?.map((dt) => {
-      return {
-        date: dt.date,
-        name: dt.name,
-        activity: dt.activity?.name,
-        contract: dt.activity?.contract?.name_contract,
-        status: dt.status.name,
-        time_start: new Date(dt.time_start).toLocaleDateString("vi-VN"),
-        time_end: new Date(dt.time_end).toLocaleDateString("vi-VN"),
-        list_user: dt.list_user?.reduce((preValue, currValue, index) => {
-          if (index === 0) {
-            return currValue.first_name + " " + currValue.last_name;
-          } else {
-            return (
-              preValue +
-              " , " +
-              currValue.first_name +
-              " " +
-              currValue.last_name
-            );
-          }
-        }, ""),
-      };
-    });
-    Excel(
-      typeTime,
-      customeData,
-      new Date(timeFirst ?? "").toLocaleDateString("vi-VN"),
-      new Date(timeEnd ?? "").toLocaleDateString("vi-VN")
-    );
+    
+    if(typeTime === "date"){
+      console.log(weekdays[new Date(timeFirst as any).getDay()],timeFirst)
+       exportToExcel({
+date:{
+  date:weekdays[new Date(timeFirst as any).getDay()],
+  day:new Date(timeFirst as any).getDate().toString(),
+  month:new Date(timeFirst as any).getMonth().toString(),
+  year: new Date(timeFirst as any).getFullYear().toString()
+},
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    description:dt.description ?? ""
+  }
+}) ?? []
+    })
+    }
+    if(typeTime === "week"){
+       exportToExcelWeek({
+year:new Date(timeFirst as any).getFullYear().toString(),
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+month:new Date(timeFirst as any).getMonth().toString(),
+week:  moment(new Date(timeFirst as any)).isoWeek().toString(),
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    completed:dt.completed ?? "",
+    uncompleted:dt.uncompleted??"",
+    solution:dt.solution??"",
+    time:new Date(dt.time_start ?? "").toLocaleDateString('vi-VN') +" - "+new Date(dt.time_end ?? "").toLocaleDateString('vi-VN')
+
+
+  }
+}) ?? []
+    })
+    }
+   
+    // const customeData = dataFilter?.map((dt) => {
+    //   return {
+    //     date: dt.date,
+    //     name: dt.name,
+    //     activity: dt.activity?.name,
+    //     contract: dt.activity?.contract?.name_contract,
+    //     status: dt.status.name,
+    //     time_start: new Date(dt.time_start).toLocaleDateString("vi-VN"),
+    //     time_end: new Date(dt.time_end).toLocaleDateString("vi-VN"),
+    //     list_user: dt.list_user?.reduce((preValue, currValue, index) => {
+    //       if (index === 0) {
+    //         return currValue.first_name + " " + currValue.last_name;
+    //       } else {
+    //         return (
+    //           preValue +
+    //           " , " +
+    //           currValue.first_name +
+    //           " " +
+    //           currValue.last_name
+    //         );
+    //       }
+    //     }, ""),
+    //   };
+    // });
+    // Excel(
+    //   typeTime,
+    //   customeData,
+    //   new Date(timeFirst ?? "").toLocaleDateString("vi-VN"),
+    //   new Date(timeEnd ?? "").toLocaleDateString("vi-VN")
+    // );
   };
 
+  const ExportWord = () => {
+    
+    if(typeTime === "date"){
+       exportToWord({
+date:{
+  date:weekdays[new Date(timeFirst as any).getDay()],
+  day:new Date(timeFirst as any).getDate().toString(),
+  month:new Date(timeFirst as any).getMonth().toString(),
+  year: new Date(timeFirst as any).getFullYear().toString()
+},
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    description:dt.description ?? ""
+  }
+}) ?? []
+    })
+    }
+    if(typeTime === "week"){
+       exportToWordWeek({
+year:new Date(timeFirst as any).getFullYear().toString(),
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+month:new Date(timeFirst as any).getMonth().toString(),
+week:  moment(new Date(timeFirst as any)).isoWeek().toString(),
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    completed:dt.completed ?? "",
+    uncompleted:dt.uncompleted??"",
+    solution:dt.solution??"",
+    time:new Date(dt.time_start ?? "").toLocaleDateString('vi-VN') +" - "+new Date(dt.time_end ?? "").toLocaleDateString('vi-VN')
+
+
+  }
+}) ?? []
+    })
+    }
+  };
+const ExportPDF = () => {
+    
+    if(typeTime === "date"){
+       exportToPDF({
+date:{
+  date:weekdays[new Date(timeFirst as any).getDay()],
+  day:new Date(timeFirst as any).getDate().toString(),
+  month:new Date(timeFirst as any).getMonth().toString(),
+  year: new Date(timeFirst as any).getFullYear().toString()
+},
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    description:dt.description ?? ""
+  }
+}) ?? []
+    })
+    }
+    if(typeTime === "week"){
+       exportToPDFWeek({
+year:new Date(timeFirst as any).getFullYear().toString(),
+name:dataFilter?.[0]?.list_user?.[0]?.first_name +" "+dataFilter?.[0]?.list_user?.[0]?.last_name,
+department: dataFilter?.[0]?.list_user?.[0]?.group_user?.name_group ?? "",
+position: dataFilter?.[0]?.list_user?.[0]?.position ?? "",
+notes:"",
+month:new Date(timeFirst as any).getMonth().toString(),
+week:  moment(new Date(timeFirst as any)).isoWeek().toString(),
+workItems: dataFilter?.map((dt,index)=>{
+  return {
+    id:index,
+    name:dt.name,
+    completed:dt.completed ?? "",
+    uncompleted:dt.uncompleted??"",
+    solution:dt.solution??"",
+    time:new Date(dt.time_start ?? "").toLocaleDateString('vi-VN') +" - "+new Date(dt.time_end ?? "").toLocaleDateString('vi-VN')
+
+
+  }
+}) ?? []
+    })
+    }
+  };
   // const ExportPDF = () => {
   //   const customeData = dataFilter?.map((dt) => {
   //     return {
@@ -267,76 +447,57 @@ export default function ReportWork() {
                 setTypeTime(e.target.value);
               }}
             >
+              <Radio.Button value="date">Ngày</Radio.Button>
               <Radio.Button value="week">Tuần</Radio.Button>
               <Radio.Button value="month">Tháng</Radio.Button>
               <Radio.Button value="year">Năm</Radio.Button>
             </Radio.Group>
           </div>
-          <RangePicker
-            className="sm:w-auto w-full"
-            picker={typeTime}
-            value={[
-              timeFirst ? dayjs(timeFirst) : undefined,
-              timeEnd ? dayjs(timeEnd) : undefined,
-            ]}
-            onChange={(e, values) => {
-              if (values[0] === "" || values[1] === "") {
-                setTimeEnd(undefined);
-                setTimeFirst(undefined);
-              } else {
-                if (typeTime === "year") {
-                  setTimeFirst(new Date(values[0]).getTime());
-                  setTimeEnd(new Date(`${values[1]}-12-31`).getTime());
-                }
-                if (typeTime === "month") {
-                  setTimeFirst(new Date(`${values[0]}-01`).getTime());
-                  setTimeEnd(
-                    new Date(
-                      `${moment(
-                        new Date(
-                          `${e?.[1]?.year()}-${(e?.[1]?.month() ?? 0) + 2}-01`
-                        )
-                      )
-                        .clone()
-                        .subtract(1, "days")}`
-                    ).getTime()
-                  );
-                }
-                if (typeTime === "week") {
-                  const weekStart = moment()
-                    .year(e?.[0]?.year() ?? 0)
-                    .isoWeek(
-                      Number(
-                        values[0]
-                          .replace(`${e?.[0]?.year()}-`, "")
-                          .replace(/\D/g, "")
-                      )
-                    )
-                    .startOf("isoWeek")
-                    .clone()
-                    .format("YYYY-MM-DD");
+          <DatePicker
+  className="sm:w-auto w-full"
+  picker={typeTime} // "year", "month", "week", or "date"
+  value={timeFirst ? dayjs(timeFirst) : null}
+  onChange={(date:any, dateString:any) => {
+    if (!date || !dateString) {
+      setTimeFirst(undefined);
+      setTimeEnd(undefined);
+      return;
+    }
 
-                  const weekEnd = moment()
-                    .year(e?.[1]?.year() ?? 0)
-                    .isoWeek(
-                      Number(
-                        values[1]
-                          .replace(`${e?.[1]?.year()}-`, "")
-                          .replace(/\D/g, "")
-                      )
-                    )
-                    .startOf("isoWeek")
-                    .clone()
-                    .add(5, "days")
-                    .format("YYYY-MM-DD");
+    if (typeTime === "year") {
+      const start = new Date(`${dateString}-01-01`).getTime();
+      const end = new Date(`${dateString}-12-31`).getTime();
+      setTimeFirst(start);
+      setTimeEnd(end);
+    }
 
-                  setTimeFirst(weekStart ? new Date(weekStart).getTime() : 0);
-                  setTimeEnd(weekEnd ? new Date(weekEnd).getTime() : 0);
-                }
-              }
-            }}
-            // value={}
-          />
+    if (typeTime === "month") {
+      const start = new Date(`${dateString}-01`).getTime();
+
+      const end = moment(new Date(`${dateString}-01`))
+        .clone()
+        .endOf("month")
+        .toDate()
+        .getTime();
+
+      setTimeFirst(start);
+      setTimeEnd(end);
+    }
+
+    if (typeTime === "week") {
+      const weekStart = moment(date).startOf("isoWeek").toDate().getTime();
+      const weekEnd = moment(date).endOf("isoWeek").toDate().getTime();
+      setTimeFirst(weekStart);
+      setTimeEnd(weekEnd);
+    }
+
+    if (typeTime === "date") {
+      const selected = new Date(dateString).getTime();
+      setTimeFirst(selected);
+      setTimeEnd(selected);
+    }
+  }}
+/>
           <Search
             onChange={(e) => {
               handleSearchFilter(e.target.value);
