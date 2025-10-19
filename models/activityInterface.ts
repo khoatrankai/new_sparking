@@ -206,6 +206,7 @@ export interface IGetWork {
     created_at: Date;
     updated_at: Date;
   }[];
+  tags?:string[]
   date?: string;
 }
 
@@ -228,6 +229,7 @@ export interface IGetWork2 {
   picture_urls?: IGetPictureWork[];
   user_create?:InfoUser
   list_user?: InfoUser[];
+  tags?:string[]
   folders?:IGetFolder[]
   date?: string;
 }
@@ -290,6 +292,7 @@ export interface ICreateWork {
   activity: string; // activity_id
   time_start: Date;
   urgent?: boolean;
+  tags?:string[]
   time_end: Date;
   picture_urls?: File[];
   picture_url_type?: string[];
@@ -449,3 +452,29 @@ export interface IReviewUsers {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export type ScheduleType = 'individual' | 'group' | 'all';
+
+export interface Schedule {
+  id?: string;
+  schedule_date?: string; // YYYY-MM-DD
+  day?: number; // 0 = Sunday, 6 = Saturday
+  time?: string; // HH:mm:ss
+  description?: string;
+  type?: ScheduleType;
+  assigned_to?: string | null;
+  grop_name?: string | null; // NOTE: Có thể là typo. Nếu bạn muốn là "group_name", hãy sửa ở cả entity và interface
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+
+export interface Tags {
+  tag_id?: string;
+  name?: string;
+  name_tag?: string;
+  works?:any[]
+  created_at?: Date;
+  updated_at?: Date;
+}
+

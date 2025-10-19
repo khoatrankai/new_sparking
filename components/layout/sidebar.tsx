@@ -23,7 +23,7 @@ import {
 const sidebarItems = [
   { icon: List, label: "Công việc", path: "/", hasSubmenu: true },
   { icon: BarChart3, label: "Dự án", path: "/projects" },
-  { icon: Clock, label: "Time sheet", path: "/timesheet" },
+  { icon: Clock, label: "Lịch trình", path: "/schedule" },
   { icon: FileText, label: "Báo cáo", path: "/reports" },
   { icon: DollarSign, label: "Ngân sách", path: "/budget" },
   { icon: AlertTriangle, label: "Cảnh báo", path: "/alerts" },

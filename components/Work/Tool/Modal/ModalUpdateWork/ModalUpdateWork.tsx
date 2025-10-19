@@ -61,6 +61,10 @@ export default function ModalUpdateWork({
     (state: RootState) => state.get_type_work
   );
 
+  const { datas: dataTags } = useSelector(
+      (state: RootState) => state.get_tag_work
+    );
+  
   const { datas: dataUsers } = useSelector(
     (state: RootState) => state.get_users
   );
@@ -72,6 +76,9 @@ export default function ModalUpdateWork({
   const [optionsListUser, setOptionsListUser] = useState<
     SelectProps["options"]
   >([]);
+  const [optionsTags, setOptionsTags] = useState<
+      SelectProps["options"]
+    >([]);
   const [listUsers, setListUsers] = useState<string[]>([]);
 
   const [form] = useForm();
@@ -169,7 +176,18 @@ export default function ModalUpdateWork({
   const btnSubmit = async () => {
     form.submit();
   };
-
+useEffect(() => {
+    if (dataTags) {
+      setOptionsTags(
+        dataTags.map((dt) => {
+          return {
+            label: dt.name,
+            value: dt.tag_id
+          };
+        })
+      );
+    }
+  }, [dataTags]);
   useEffect(() => {
     if (dataUsers) {
       setOptionsListUser(
@@ -225,14 +243,14 @@ export default function ModalUpdateWork({
                   return (
                     <Tooltip
                       title={
-                        dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                        (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                       }
                       placement="top"
                     >
                       <Avatar
                         src={dataFil?.picture_url}
                         alt={
-                          dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                          (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                         }
                         style={{ backgroundColor: "#87d068" }}
                       />
@@ -462,7 +480,21 @@ export default function ModalUpdateWork({
                   allowClear
                 />
               </Form.Item>
+               <Form.Item
+                              name="tags"
+                              label="Tags"
+                            >
+                              <Select
+                                mode="multiple"
+                                allowClear
+                                maxTagCount="responsive"
+                                style={{ width: "220px" }}
+                                placeholder="Chọn tag"
+                                options={optionsTags} // hoặc children Option nếu bạn không dùng `options`
+                              />
+                            </Form.Item>
             </Form>
+            
             <div className="my-2 flex flex-col gap-8">
               <div className="mb-2  pb-2">
                 <div className="flex items-center text-xs font-medium text-[#EB8823] hover:opacity-85 cursor-pointer mb-2">

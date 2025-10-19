@@ -22,7 +22,7 @@ import React, { useState } from "react";
 const sidebarItems = [
   { icon: List, label: "Công việc", path: "/", hasSubmenu: true },
   { icon: BarChart3, label: "Dự án", path: "/project" },
-  { icon: Clock, label: "Time sheet", path: "/timesheet" },
+  { icon: Clock, label: "Lịch trình", path: "/schedule" },
   { icon: FileText, label: "Báo cáo", path: "/reports" },
   { icon: DollarSign, label: "Ngân sách", path: "/budget" },
   { icon: AlertTriangle, label: "Cảnh báo", path: "/alerts" },
@@ -38,6 +38,7 @@ const subItems = ["Tất cả", "Bạn thực hiện", "Bạn đã giao", "Bạn
 const managementItems = [
   { icon: UserCheck, label: "Nhân viên", path: "/management/user" },
   { icon: Building, label: "Phòng ban", path: "/management/departments" },
+  { icon: Building, label: "Tags", path: "/management/tags" },
   { icon: Users, label: "Khách hàng", path: "/management/customers" },
   { icon: Truck, label: "Nhà cung cấp", path: "/management/suppliers" },
   { icon: Package, label: "Nhà thầu", path: "/management/contractors" },
@@ -110,7 +111,7 @@ const Sidebar = () => {
     if (pathname === "/") return "Công việc"
     if (pathname === "/work") return "Công việc"
     if (pathname === "/project") return "Dự án"
-    if (pathname === "/timesheet") return "Time sheet"
+    if (pathname === "/schedule") return "Lịch trình"
     if (pathname === "/reports") return "Báo cáo"
     if (pathname === "/budget") return "Ngân sách"
     if (pathname === "/alerts") return "Cảnh báo"

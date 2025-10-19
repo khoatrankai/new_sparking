@@ -100,7 +100,7 @@ const router = useRouter()
     const [activeMenu, setActiveMenu] = useState("Công việc")
     const handleDelete = async () => {
     const statusCode = await postdata(() =>
-      activityService.deleteActivities(selectedTasks)
+      activityService.deleteWorks(selectedTasks)
     );
     if (statusCode === 200) {
       // dispatch(fetchWorks());

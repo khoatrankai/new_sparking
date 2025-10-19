@@ -69,6 +69,10 @@ export default function ModalAddWork({
     (state: RootState) => state.get_type_work
   );
 
+  const { datas: dataTags } = useSelector(
+    (state: RootState) => state.get_tag_work
+  );
+
   const { datas: dataUsers } = useSelector(
     (state: RootState) => state.get_users
   );
@@ -78,6 +82,9 @@ export default function ModalAddWork({
   );
   const [tabChooseUser, setTabChooseUser] = useState<boolean>(false);
   const [optionsListUser, setOptionsListUser] = useState<
+    SelectProps["options"]
+  >([]);
+  const [optionsTags, setOptionsTags] = useState<
     SelectProps["options"]
   >([]);
   const [listUsers, setListUsers] = useState<string[]>([]);
@@ -145,6 +152,18 @@ export default function ModalAddWork({
       );
     }
   }, [dataUsers]);
+  useEffect(() => {
+    if (dataTags) {
+      setOptionsTags(
+        dataTags.map((dt) => {
+          return {
+            label: dt.name,
+            value: dt.tag_id
+          };
+        })
+      );
+    }
+  }, [dataTags]);
   return (
     <>
       <Button
@@ -244,14 +263,14 @@ export default function ModalAddWork({
                   return (
                     <Tooltip
                       title={
-                        dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                        (dataFil?.first_name || "") + (dataFil?.last_name || "")
                       }
                       placement="top"
                     >
                       <Avatar
                         src={dataFil?.picture_url}
                         alt={
-                          dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                          (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                         }
                         style={{ backgroundColor: "#87d068" }}
                       />
@@ -439,6 +458,19 @@ export default function ModalAddWork({
                   autoSize={{ minRows: 3 }}
                 />
               </Form.Item>  
+                <Form.Item
+                name="tags"
+                label="Tags"
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  maxTagCount="responsive"
+                  style={{ width: "220px" }}
+                  placeholder="Chọn tag"
+                  options={optionsTags} // hoặc children Option nếu bạn không dùng `options`
+                />
+              </Form.Item>
               </Panel>
               </Collapse>
             

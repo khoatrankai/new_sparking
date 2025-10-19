@@ -32,6 +32,7 @@ import ModalStatusWork from "./ModalStatusWork/ModalStatusWork";
 import ModalAddActivity from "@/components/Activity/Tool/Modal/ModalActivity";
 import { fetchTypeWorksID } from "@/redux/store/slices/activitySlices/type_id_work.slice";
 import { useParams, useSearchParams } from "next/navigation";
+import ModalAddProject from "@/components/v2/Project/Tool/Modal/ModalAddProject";
 
 type Props = {
   idType?: string;
@@ -49,6 +50,7 @@ export default function ModalAddWork({
   const { Panel } = Collapse;
   // type TagRender = SelectProps['tagRender'];
   const { projectID } = useParams();
+  const refBtnProject = useRef<HTMLButtonElement>(null);
   const searchParams = useSearchParams();
   useEffect(()=>{
       if(searchParams)
@@ -69,6 +71,10 @@ export default function ModalAddWork({
     (state: RootState) => state.get_type_work
   );
 
+  const { datas: dataTags } = useSelector(
+    (state: RootState) => state.get_tag_work
+  );
+
   const { datas: dataUsers } = useSelector(
     (state: RootState) => state.get_users
   );
@@ -80,8 +86,13 @@ export default function ModalAddWork({
   const [optionsListUser, setOptionsListUser] = useState<
     SelectProps["options"]
   >([]);
+  const [optionsTags, setOptionsTags] = useState<
+    SelectProps["options"]
+  >([]);
   const [listUsers, setListUsers] = useState<string[]>([]);
-
+  const { datas: dataProject } = useSelector(
+      (state: RootState) => state.get_projects
+    );
   const [form] = useForm();
   const { postdata } = usePostData();
   const dispatch = useDispatch<AppDispatch>();
@@ -145,6 +156,18 @@ export default function ModalAddWork({
       );
     }
   }, [dataUsers]);
+  useEffect(() => {
+    if (dataTags) {
+      setOptionsTags(
+        dataTags.map((dt) => {
+          return {
+            label: dt.name,
+            value: dt.tag_id
+          };
+        })
+      );
+    }
+  }, [dataTags]);
   return (
     <>
       <Button
@@ -194,6 +217,48 @@ export default function ModalAddWork({
               >
                 <Input />
               </Form.Item>
+              <Form.Item
+                            name="project"
+                            label="Công trình"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng chọn công trình!",
+                              },
+                            ]}
+                            style={{ minWidth: "320px", flex: "1 1 0%" }}
+                          >
+                            <Select
+                              placeholder="Chọn công trình"
+                              showSearch
+                              filterOption={(input, option) => {
+                                const text = Array.isArray(option?.children)
+                                  ? option.children.join("")
+                                  : option?.children ?? "";
+                                return text.toLowerCase().includes(input.toLowerCase());
+                              }}
+                              dropdownRender={(menu) => (
+                                <>
+                                  {menu}
+                                  <Divider style={{ margin: "8px 0" }} />
+                                  <Button
+                                    type="link"
+                                    onClick={() => {
+                                      refBtnProject.current?.click();
+                                    }}
+                                  >
+                                    + Thêm tùy chọn mới
+                                  </Button>
+                                </>
+                              )}
+                            >
+                              {dataProject?.map((dt) => (
+                                <Option key={dt.project_id} value={dt.project_id}>
+                                  {dt.name}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
               <div className="flex flex-wrap gap-3">
               <Form.Item
                 name="time_start"
@@ -244,14 +309,14 @@ export default function ModalAddWork({
                   return (
                     <Tooltip
                       title={
-                        dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                        (dataFil?.first_name || "") + (dataFil?.last_name || "")
                       }
                       placement="top"
                     >
                       <Avatar
                         src={dataFil?.picture_url}
                         alt={
-                          dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                          (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                         }
                         style={{ backgroundColor: "#87d068" }}
                       />
@@ -439,6 +504,19 @@ export default function ModalAddWork({
                   autoSize={{ minRows: 3 }}
                 />
               </Form.Item>  
+                <Form.Item
+                name="tags"
+                label="Tags"
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  maxTagCount="responsive"
+                  style={{ width: "100%" }}
+                  placeholder="Chọn tag"
+                  options={optionsTags} // hoặc children Option nếu bạn không dùng `options`
+                />
+              </Form.Item>
               </Panel>
               </Collapse>
             
@@ -458,6 +536,9 @@ export default function ModalAddWork({
       <ModalAddActivity
         refBtnActivity={refBtnActivity as Ref<HTMLButtonElement>}
       />
+      <ModalAddProject
+              refBtnProject={refBtnProject as Ref<HTMLButtonElement>}
+            />
     </>
   );
 }

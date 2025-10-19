@@ -231,17 +231,17 @@ export default function ModalAddAsset({ refBtnAsset }: Props) {
 
             <Form.Item
               name="project"
-              label="Dự án"
+              label="Công trình"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng chọn dự án!",
+                  message: "Vui lòng chọn công trình!",
                 },
               ]}
               style={{ minWidth: "320px", flex: "1 1 0%" }}
             >
               <Select
-                placeholder="Chọn dự án"
+                placeholder="Chọn công trình"
                 showSearch
                 filterOption={(input, option) => {
                   const text = Array.isArray(option?.children)

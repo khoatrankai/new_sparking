@@ -64,6 +64,7 @@ import contractorsProjectSlice from "./slices/projectSlices/get_contractor.slice
 import warrantiesSlice from "./slices/productSlices/get_all_warranty.slice";
 import roleProjectSlice from "./slices/projectSlices/get_role.slice";
 import workFilterByUserSlice from "./slices/activitySlices/work_filter_by_user.slide";
+import tagWorkSlice from "./slices/activitySlices/get_all_tag.slice";
 
 export const store = configureStore({
   reducer: {
@@ -107,6 +108,7 @@ export const store = configureStore({
     get_type_work: typeWorkSlice,
     get_group_customer: customerGroupSlice,
     get_group_user: userGroupSlice,
+    get_tag_work: tagWorkSlice,
     get_filter_customer: customerFilterSlice,
     get_filter_user: userFilterSlice,
     get_status_activity: statusActivitySlice,

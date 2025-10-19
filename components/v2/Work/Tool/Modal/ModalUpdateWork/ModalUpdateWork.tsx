@@ -36,6 +36,7 @@ import dayjs from "dayjs";
 import { useParams } from "next/navigation";
 import CustomFormData from "@/utils/CustomFormData";
 import { onChangeImagePreview } from "@/redux/store/slices/image-preview.slice";
+import ModalAddProject from "@/components/v2/Project/Tool/Modal/ModalAddProject";
 
 type Props = {
   ID: string;
@@ -61,6 +62,10 @@ export default function ModalUpdateWork({
     (state: RootState) => state.get_type_work
   );
 
+  const { datas: dataTags } = useSelector(
+      (state: RootState) => state.get_tag_work
+    );
+  
   const { datas: dataUsers } = useSelector(
     (state: RootState) => state.get_users
   );
@@ -68,12 +73,18 @@ export default function ModalUpdateWork({
   const { datas: dataActivity } = useSelector(
     (state: RootState) => state.get_activities
   );
+   const { datas: dataProject } = useSelector(
+        (state: RootState) => state.get_projects
+      );
   const [tabChooseUser, setTabChooseUser] = useState<boolean>(false);
   const [optionsListUser, setOptionsListUser] = useState<
     SelectProps["options"]
   >([]);
+  const [optionsTags, setOptionsTags] = useState<
+      SelectProps["options"]
+    >([]);
   const [listUsers, setListUsers] = useState<string[]>([]);
-
+const refBtnProject = useRef<HTMLButtonElement>(null);
   const [form] = useForm();
   const { postdata } = usePostData();
   const dispatch = useDispatch<AppDispatch>();
@@ -95,13 +106,17 @@ export default function ModalUpdateWork({
 
   const fetchData = async () => {
     const res = await activityService.getWorkById(ID);
+    console.log(res)
     if (res.statusCode === 200) {
       const dataRes = res.data as IGetWork2;
       form.setFieldsValue({
         ...dataRes,
-        type: dataRes.type.type_work_id,
-        status: dataRes.status.status_work_id,
-        activity: dataRes.activity?.activity_id,
+        type: dataRes?.type?.type_work_id,
+        status: dataRes?.status?.status_work_id,
+        activity: dataRes?.activity?.activity_id,
+        tags:dataRes?.tags?.map((dt:any)=>{
+          return dt?.tag?.tag_id
+        })
       });
       setListImg(
         (dataRes.picture_urls?.map((dt) => {
@@ -169,7 +184,18 @@ export default function ModalUpdateWork({
   const btnSubmit = async () => {
     form.submit();
   };
-
+useEffect(() => {
+    if (dataTags) {
+      setOptionsTags(
+        dataTags.map((dt) => {
+          return {
+            label: dt.name,
+            value: dt.tag_id
+          };
+        })
+      );
+    }
+  }, [dataTags]);
   useEffect(() => {
     if (dataUsers) {
       setOptionsListUser(
@@ -225,14 +251,14 @@ export default function ModalUpdateWork({
                   return (
                     <Tooltip
                       title={
-                        dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                        (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                       }
                       placement="top"
                     >
                       <Avatar
                         src={dataFil?.picture_url}
                         alt={
-                          dataFil?.first_name ?? "" + dataFil?.last_name ?? ""
+                          (dataFil?.first_name ?? "") + (dataFil?.last_name ?? "")
                         }
                         style={{ backgroundColor: "#87d068" }}
                       />
@@ -342,7 +368,48 @@ export default function ModalUpdateWork({
               >
                 <Input />
               </Form.Item>
-
+                <Form.Item
+                                            name="project"
+                                            label="Công trình"
+                                            rules={[
+                                              {
+                                                required: true,
+                                                message: "Vui lòng chọn công trình!",
+                                              },
+                                            ]}
+                                            style={{ minWidth: "320px", flex: "1 1 0%" }}
+                                          >
+                                            <Select
+                                              placeholder="Chọn công trình"
+                                              showSearch
+                                              filterOption={(input, option) => {
+                                                const text = Array.isArray(option?.children)
+                                                  ? option.children.join("")
+                                                  : option?.children ?? "";
+                                                return text.toLowerCase().includes(input.toLowerCase());
+                                              }}
+                                              dropdownRender={(menu) => (
+                                                <>
+                                                  {menu}
+                                                  <Divider style={{ margin: "8px 0" }} />
+                                                  <Button
+                                                    type="link"
+                                                    onClick={() => {
+                                                      refBtnProject.current?.click();
+                                                    }}
+                                                  >
+                                                    + Thêm tùy chọn mới
+                                                  </Button>
+                                                </>
+                                              )}
+                                            >
+                                              {dataProject?.map((dt) => (
+                                                <Option key={dt.project_id} value={dt.project_id}>
+                                                  {dt.name}
+                                                </Option>
+                                              ))}
+                                            </Select>
+                                          </Form.Item>
               <Form.Item
                 name="status"
                 label="Trạng thái"
@@ -462,7 +529,21 @@ export default function ModalUpdateWork({
                   allowClear
                 />
               </Form.Item>
+               <Form.Item
+                              name="tags"
+                              label="Tags"
+                            >
+                              <Select
+                                mode="multiple"
+                                allowClear
+                                maxTagCount="responsive"
+                                style={{ width: "220px" }}
+                                placeholder="Chọn tag"
+                                options={optionsTags} // hoặc children Option nếu bạn không dùng `options`
+                              />
+                            </Form.Item>
             </Form>
+            
             <div className="my-2 flex flex-col gap-8">
               <div className="mb-2  pb-2">
                 <div className="flex items-center text-xs font-medium text-[#EB8823] hover:opacity-85 cursor-pointer mb-2">
@@ -533,6 +614,9 @@ export default function ModalUpdateWork({
       <ModalAddActivity
         refBtnActivity={refBtnActivity as Ref<HTMLButtonElement>}
       />
+      <ModalAddProject
+              refBtnProject={refBtnProject as Ref<HTMLButtonElement>}
+            />
     </>
   );
 }

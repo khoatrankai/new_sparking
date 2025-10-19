@@ -30,6 +30,8 @@ import {
   IUpdateTypeActivity,
   IUpdateTypeWork,
   IUpdateWork,
+  Schedule,
+  Tags,
 } from "@/models/activityInterface";
 
 const activityService = {
@@ -1243,6 +1245,142 @@ const activityService = {
   getWorkEfficiency: async (user_id:string) => {
     try {
       const response = await api.get(`/activity/get-work-efficiency-by-user?user_id=${user_id}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+   getAllScheduleFilter: async (filter?:{group_name?:string,assigned_to?:string,week_start?:string,type?:string}) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value);
+          }
+        });
+      }
+      const response = await api.get(`/activity/schedule-filter?${queryParams.toString()}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  getScheduleById: async (id: string) => {
+    try {
+      const response = await api.get(`/activity/schedule/id/${id}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  // getFullTypeWorkById: async (id?: string) => {
+  //   try {
+  //     const response = await api.get(`/activity/type-work/full/id/${id}`);
+  //     return response.data;
+  //   } catch (error) {
+  //     handleError(error);
+  //     throw error;
+  //   }
+  // },
+  createSchedule: async (data: Schedule) => {
+    try {
+      const response = await api.post("/activity/schedule", data);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  updateSchedule: async (id: string, data: Schedule) => {
+    try {
+      const response = await api.put(`/activity/schedule/${id}`, data);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  deleteSchedule: async (ids: string[]) => {
+    try {
+      const response = await api.delete(`/activity/schedule`,{data:ids});
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+   getAllTag: async () => {
+    try {
+     
+      const response = await api.get(`/activity/tags`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  getTagById: async (id: string) => {
+    try {
+      const response = await api.get(`/activity/tag/id/${id}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  // getFullTypeWorkById: async (id?: string) => {
+  //   try {
+  //     const response = await api.get(`/activity/type-work/full/id/${id}`);
+  //     return response.data;
+  //   } catch (error) {
+  //     handleError(error);
+  //     throw error;
+  //   }
+  // },
+  createTag: async (data: Tags) => {
+    try {
+      const response = await api.post("/activity/tag", data);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  updateTag: async (id: string, data: Tags) => {
+    try {
+      const response = await api.put(`/activity/tag/${id}`, data);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  deleteTag: async (ids: string[]) => {
+    try {
+      const response = await api.delete(`/activity/tag`,{data:ids});
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+  getWorkTagFilter: async (filter?:{user?:string,type:"all"|"user", week_start: string}) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value);
+          }
+        });
+      }
+      const response = await api.get(`/activity/work-tag?${queryParams.toString()}`);
       return response.data;
     } catch (error) {
       handleError(error);
