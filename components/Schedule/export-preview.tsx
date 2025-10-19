@@ -134,7 +134,7 @@ export function ExportPreview({ weekStart, schedules, onClose,refBtnExportPDF }:
                     <div className="space-y-3">
                       {daySchedules.map((schedule) => (
                         <div key={schedule.id} className="text-xs leading-relaxed">
-                          <div className="font-bold mb-1">{schedule.time}</div>
+                          <div className="font-bold mb-1">{schedule.time.substring(0, 5)}</div>
                           <div className="whitespace-pre-wrap italic" style={{ lineHeight: "1.4" }}>
                             {schedule.description}
                           </div>
@@ -164,7 +164,7 @@ export function ExportPreview({ weekStart, schedules, onClose,refBtnExportPDF }:
                     <div className="space-y-3">
                       {daySchedules.map((schedule) => (
                         <div key={schedule.id} className="text-xs leading-relaxed">
-                          <div className="font-bold mb-1">{schedule.time}</div>
+                          <div className="font-bold mb-1">{schedule.time.substring(0, 5)}</div>
                           <div className="whitespace-pre-wrap italic" style={{ lineHeight: "1.4" }}>
                             {schedule.description}
                           </div>

@@ -191,10 +191,12 @@ const refBtnExportSchedule = useRef<any>(null)
     }
   }
 
-  const handleDeleteSchedule = (id: string) => {
+  const handleDeleteSchedule = async(id: string) => {
     if (confirm("Bạn có chắc chắn muốn xóa lịch trình này?")) {
       // deleteSchedule(id)
       // setSchedules(getSchedulesByWeek(weekStart))-
+      await activityService.deleteSchedule([id])
+      fetchData()
     }
   }
 
