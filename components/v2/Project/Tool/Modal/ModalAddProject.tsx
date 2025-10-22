@@ -103,9 +103,12 @@ const addUserRole = () => {
   }
   const handleSubmit = async (values: ICreateProject) => {
     try {
+      
       const formdata = CustomFormData(
         Object.entries({
           ...values,
+          start_date:values.start_date ? values.start_date.toISOString():undefined,
+          end_date:values.end_date ? values.end_date.toISOString():undefined,
           picture_url: [filePicture?.originFileObj as File],users:JSON.stringify(userRoles)
         }).reduce((acc: any, [key, value]) => {
           if (value !== null && value !== undefined) {
