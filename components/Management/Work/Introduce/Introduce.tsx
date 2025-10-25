@@ -104,7 +104,7 @@ export default function Introduce() {
             }
             
            
-            <Button className='flex flex-col items-center justify-center h-16' type='text'>
+            <Button className='flex flex-col items-center justify-center !h-20' type='text'>
             <HiOutlineDocumentReport className='text-xl'/>
             <span className='text-xs font-medium'>Báo cáo</span>
             </Button>
