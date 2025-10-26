@@ -48,6 +48,7 @@ export default function ModalAddWork({
 }: Props) {
   const { Panel } = Collapse;
   // type TagRender = SelectProps['tagRender'];
+  const refBtnProject = useRef<HTMLButtonElement>(null);
   const { projectID } = useParams();
   const searchParams = useSearchParams();
   useEffect(()=>{
@@ -77,6 +78,9 @@ export default function ModalAddWork({
     (state: RootState) => state.get_users
   );
 
+  const { datas: dataProject } = useSelector(
+        (state: RootState) => state.get_projects
+      );
   const { datas: dataActivity } = useSelector(
     (state: RootState) => state.get_activities
   );
@@ -213,6 +217,48 @@ export default function ModalAddWork({
               >
                 <Input />
               </Form.Item>
+               <Form.Item
+                                          name="project"
+                                          label="Công trình"
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message: "Vui lòng chọn công trình!",
+                                            },
+                                          ]}
+                                          style={{ minWidth: "320px", flex: "1 1 0%" }}
+                                        >
+                                          <Select
+                                            placeholder="Chọn công trình"
+                                            showSearch
+                                            filterOption={(input, option) => {
+                                              const text = Array.isArray(option?.children)
+                                                ? option.children.join("")
+                                                : option?.children ?? "";
+                                              return text.toLowerCase().includes(input.toLowerCase());
+                                            }}
+                                            dropdownRender={(menu) => (
+                                              <>
+                                                {menu}
+                                                <Divider style={{ margin: "8px 0" }} />
+                                                <Button
+                                                  type="link"
+                                                  onClick={() => {
+                                                    refBtnProject.current?.click();
+                                                  }}
+                                                >
+                                                  + Thêm tùy chọn mới
+                                                </Button>
+                                              </>
+                                            )}
+                                          >
+                                            {dataProject?.map((dt) => (
+                                              <Option key={dt.project_id} value={dt.project_id}>
+                                                {dt.name}
+                                              </Option>
+                                            ))}
+                                          </Select>
+                                        </Form.Item>
               <div className="flex flex-wrap gap-3">
               <Form.Item
                 name="time_start"

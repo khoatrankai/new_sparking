@@ -53,6 +53,7 @@ export default function ModalUpdateWork({
   type,
 }: Props) {
   const { projectID } = useParams();
+  const refBtnProject = useRef<HTMLButtonElement>(null);
   const [listImg, setListImg] = useState<UploadFile[]>([]);
   const refBtnType = useRef<HTMLButtonElement>(null);
   const refBtnStatus = useRef<HTMLButtonElement>(null);
@@ -60,6 +61,10 @@ export default function ModalUpdateWork({
   const { datas: dataTypeWork } = useSelector(
     (state: RootState) => state.get_type_work
   );
+
+  const { datas: dataProject } = useSelector(
+        (state: RootState) => state.get_projects
+      );
 
   const { datas: dataTags } = useSelector(
       (state: RootState) => state.get_tag_work
@@ -360,7 +365,48 @@ useEffect(() => {
               >
                 <Input />
               </Form.Item>
-
+                 <Form.Item
+                                            name="project"
+                                            label="Công trình"
+                                            rules={[
+                                              {
+                                                required: true,
+                                                message: "Vui lòng chọn công trình!",
+                                              },
+                                            ]}
+                                            style={{ minWidth: "320px", flex: "1 1 0%" }}
+                                          >
+                                            <Select
+                                              placeholder="Chọn công trình"
+                                              showSearch
+                                              filterOption={(input, option) => {
+                                                const text = Array.isArray(option?.children)
+                                                  ? option.children.join("")
+                                                  : option?.children ?? "";
+                                                return text.toLowerCase().includes(input.toLowerCase());
+                                              }}
+                                              dropdownRender={(menu) => (
+                                                <>
+                                                  {menu}
+                                                  <Divider style={{ margin: "8px 0" }} />
+                                                  <Button
+                                                    type="link"
+                                                    onClick={() => {
+                                                      refBtnProject.current?.click();
+                                                    }}
+                                                  >
+                                                    + Thêm tùy chọn mới
+                                                  </Button>
+                                                </>
+                                              )}
+                                            >
+                                              {dataProject?.map((dt) => (
+                                                <Option key={dt.project_id} value={dt.project_id}>
+                                                  {dt.name}
+                                                </Option>
+                                              ))}
+                                            </Select>
+                                          </Form.Item>
               <Form.Item
                 name="status"
                 label="Trạng thái"
