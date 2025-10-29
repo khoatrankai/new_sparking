@@ -19,6 +19,15 @@ export interface TargetRevenue {
   year?: number;
 }
 
+export interface Budget {
+  id?: string;
+  name?: string;
+  spent?: number;
+  allocation?: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface LinkSystem {
   link_system_id?: string;
   name_tag?: string;

@@ -262,6 +262,17 @@ export interface IGetReview {
   updated_at: Date;
 }
 
+export interface IGetDashboardWorkFilter {
+  works:IGetWork2[],
+          expire:number,
+          process:number,
+          completed:number,
+          cancel:number,
+          waitting:number,
+          not_completed:number,
+}
+
+
 export interface IGetComment {
   comment_id: string;
   description?: string;

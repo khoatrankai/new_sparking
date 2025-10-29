@@ -1,71 +1,89 @@
 "use client"
 
-import { useState } from "react"
+import { Ref, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { DollarSign, TrendingUp, TrendingDown, Plus, Search, Filter, Download, AlertTriangle } from "lucide-react"
+import { AppDispatch, RootState } from "@/redux/store/store"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchBudget } from "@/redux/store/slices/systemSlices/get_budget.slice"
+import ModalAddBudget from "@/components/v2/Budget/ModalBudget/ModalAddBudget"
 
 export default function BudgetPage() {
+  const dispatch = useDispatch<AppDispatch>()
+  const refBtnAdd = useRef<HTMLButtonElement>(undefined)
   const [searchTerm, setSearchTerm] = useState("")
-
+  const { datas: budgetItems } = useSelector(
+      (state: RootState) => state.budget_system
+    );
   const budgetOverview = {
-    totalBudget: 2500000000,
-    usedBudget: 1850000000,
-    remainingBudget: 650000000,
-    monthlySpent: 185000000,
+    totalBudget: budgetItems.reduce((preV,currV)=>{
+      return preV + (currV.allocation ?? 0)
+    },0),
+    usedBudget: budgetItems.reduce((preV,currV)=>{
+      return preV + (currV.spent ?? 0)
+    },0),
+    remainingBudget: budgetItems.reduce((preV,currV)=>{
+      return preV + ((currV.allocation ?? 0) - (currV.spent ?? 0))
+    },0),
+    monthlySpent: budgetItems.reduce((preV,currV)=>{
+      return preV + (currV.allocation ?? 0)
+    },0),
   }
 
-  const budgetItems = [
-    {
-      id: 1,
-      category: "Phát triển phần mềm",
-      allocated: 800000000,
-      spent: 650000000,
-      remaining: 150000000,
-      status: "Trong ngân sách",
-      progress: 81,
-    },
-    {
-      id: 2,
-      category: "Thiết bị phần cứng",
-      allocated: 500000000,
-      spent: 480000000,
-      remaining: 20000000,
-      status: "Gần hết ngân sách",
-      progress: 96,
-    },
-    {
-      id: 3,
-      category: "Marketing & Quảng cáo",
-      allocated: 300000000,
-      spent: 180000000,
-      remaining: 120000000,
-      status: "Trong ngân sách",
-      progress: 60,
-    },
-    {
-      id: 4,
-      category: "Đào tạo nhân viên",
-      allocated: 200000000,
-      spent: 120000000,
-      remaining: 80000000,
-      status: "Trong ngân sách",
-      progress: 60,
-    },
-    {
-      id: 5,
-      category: "Bảo trì hệ thống",
-      allocated: 400000000,
-      spent: 420000000,
-      remaining: -20000000,
-      status: "Vượt ngân sách",
-      progress: 105,
-    },
-  ]
-
+  // const budgetItems = [
+  //   {
+  //     id: 1,
+  //     category: "Phát triển phần mềm",
+  //     allocated: 800000000,
+  //     spent: 650000000,
+  //     remaining: 150000000,
+  //     status: "Trong ngân sách",
+  //     progress: 81,
+  //   },
+  //   {
+  //     id: 2,
+  //     category: "Thiết bị phần cứng",
+  //     allocated: 500000000,
+  //     spent: 480000000,
+  //     remaining: 20000000,
+  //     status: "Gần hết ngân sách",
+  //     progress: 96,
+  //   },
+  //   {
+  //     id: 3,
+  //     category: "Marketing & Quảng cáo",
+  //     allocated: 300000000,
+  //     spent: 180000000,
+  //     remaining: 120000000,
+  //     status: "Trong ngân sách",
+  //     progress: 60,
+  //   },
+  //   {
+  //     id: 4,
+  //     category: "Đào tạo nhân viên",
+  //     allocated: 200000000,
+  //     spent: 120000000,
+  //     remaining: 80000000,
+  //     status: "Trong ngân sách",
+  //     progress: 60,
+  //   },
+  //   {
+  //     id: 5,
+  //     category: "Bảo trì hệ thống",
+  //     allocated: 400000000,
+  //     spent: 420000000,
+  //     remaining: -20000000,
+  //     status: "Vượt ngân sách",
+  //     progress: 105,
+  //   },
+  // ]
+  useEffect(()=>{
+    dispatch(fetchBudget())
+  },[])
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -96,11 +114,11 @@ export default function BudgetPage() {
             <p className="text-gray-600">Quản lý và theo dõi ngân sách dự án</p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline">
+            {/* <Button variant="outline">
               <Download className="w-4 h-4 mr-2" />
               Xuất báo cáo
-            </Button>
-            <Button className="bg-teal-600 hover:bg-teal-700">
+            </Button> */}
+            <Button className="bg-teal-600 hover:bg-teal-700" onClick={()=>{refBtnAdd.current?.click()}}>
               <Plus className="w-4 h-4 mr-2" />
               Thêm mục ngân sách
             </Button>
@@ -177,8 +195,8 @@ export default function BudgetPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center gap-4">
+        {/* <div className="bg-white rounded-lg border border-gray-200 p-4"> */}
+          {/* <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -192,8 +210,8 @@ export default function BudgetPage() {
               <Filter className="w-4 h-4 mr-2" />
               Bộ lọc
             </Button>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
 
         {/* Budget Items */}
         <Card>
@@ -206,25 +224,25 @@ export default function BudgetPage() {
                 <div key={item.id} className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-gray-900">{item.category}</h3>
-                      {item.status === "Vượt ngân sách" && <AlertTriangle className="w-5 h-5 text-red-500" />}
+                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                      {(((item.spent ?? 0)/(item.allocation??1)) <0.3?'Gần hết ngân sách':((item.spent ?? 0)/(item.allocation??1)) >1?'Vượt ngân sách':'Trong ngân sách') === "Vượt ngân sách" && <AlertTriangle className="w-5 h-5 text-red-500" />}
                     </div>
-                    <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
+                    <Badge className={getStatusColor(((item.spent ?? 0)/(item.allocation??1)) <0.3?'Gần hết ngân sách':((item.spent ?? 0)/(item.allocation??1)) >1?'Vượt ngân sách':'Trong ngân sách')}>{((item.spent ?? 0)/(item.allocation??1)) <0.3?'Gần hết ngân sách':((item.spent ?? 0)/(item.allocation??1)) >1?'Vượt ngân sách':'Trong ngân sách'}</Badge>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                     <div>
                       <p className="text-sm text-gray-600">Phân bổ</p>
-                      <p className="font-semibold">{formatCurrency(item.allocated)}</p>
+                      <p className="font-semibold">{formatCurrency(item.allocation ?? 0)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Đã chi</p>
-                      <p className="font-semibold">{formatCurrency(item.spent)}</p>
+                      <p className="font-semibold">{formatCurrency(item.spent ?? 0)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Còn lại</p>
-                      <p className={`font-semibold ${item.remaining < 0 ? "text-red-600" : "text-green-600"}`}>
-                        {formatCurrency(item.remaining)}
+                      <p className={`font-semibold ${((item.allocation ?? 0) - (item.spent ?? 0)) < 0 ? "text-red-600" : "text-green-600"}`}>
+                        {formatCurrency((item.allocation ?? 0) - (item.spent ?? 0))}
                       </p>
                     </div>
                   </div>
@@ -232,11 +250,11 @@ export default function BudgetPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Tiến độ sử dụng</span>
-                      <span className="font-medium">{item.progress}%</span>
+                      <span className="font-medium">{(item.spent ?? 0) * 100/(item.allocation??1)}%</span>
                     </div>
                     <Progress
-                      value={Math.min(item.progress, 100)}
-                      className={`h-2 ${item.progress > 100 ? "bg-red-100" : ""}`}
+                      value={Math.min((item.spent ?? 0) * 100/(item.allocation??1), 100)}
+                      className={`h-2 ${((item.spent ?? 0) * 100/(item.allocation??1)) > 100 ? "bg-red-100" : ""}`}
                     />
                   </div>
                 </div>
@@ -245,6 +263,7 @@ export default function BudgetPage() {
           </CardContent>
         </Card>
       </div>
+      <ModalAddBudget refBtnBudget={refBtnAdd as Ref<HTMLButtonElement>} />
     </div>
   )
 }

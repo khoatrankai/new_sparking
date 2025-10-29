@@ -199,78 +199,7 @@ export default function ModalAddContractor({ refBtnContractors }: Props) {
                             />
                           </Form.Item>
           </div>
-          {/* </SubMenu> */}
-          {/* <SubMenu title="Thông tin giao hàng" key="info_address">
-              <div className="flex flex-wrap gap-2 h-fit w-fit rounded-lg p-1">
-                <Form.Item
-                  name="address_payment"
-                  label="Địa chỉ thanh toán"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập địa chỉ thanh toán!",
-                    },
-                  ]}
-                  style={{ minWidth: "320px", flex: "1 1 0%" }}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="province_payment"
-                  label="Tỉnh/Thành phố thanh toán"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập tỉnh/thành phố thanh toán!",
-                    },
-                  ]}
-                  style={{ minWidth: "320px", flex: "1 1 0%" }}
-                >
-                  <Select placeholder="Chọn khu vực">
-                    {dataProvinces?.map((dt) => (
-                      <Option key={dt.province_id} value={dt.province_id}>
-                        {dt.name_province}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-
-                <Form.Item
-                  name="address_delivery"
-                  label="Địa chỉ giao hàng"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập địa chỉ giao hàng!",
-                    },
-                  ]}
-                  style={{ minWidth: "320px", flex: "1 1 0%" }}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  name="province_delivery"
-                  label="Tỉnh/Thành phố giao hàng"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập tỉnh/thành phố giao hàng!",
-                    },
-                  ]}
-                  style={{ minWidth: "320px", flex: "1 1 0%" }}
-                >
-                  <Select placeholder="Chọn khu vực">
-                    {dataProvinces?.map((dt) => (
-                      <Option key={dt.province_id} value={dt.province_id}>
-                        {dt.name_province}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </div>
-            </SubMenu> */}
-          {/* </Menu> */}
+         
 
           <Form.Item
             style={{ width: "100%", display: "flex", justifyContent: "end" }}

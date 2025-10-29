@@ -25,7 +25,7 @@ const sidebarItems = [
   { icon: Clock, label: "Lịch trình", path: "/schedule" },
   { icon: FileText, label: "Báo cáo", path: "/reports" },
   { icon: DollarSign, label: "Ngân sách", path: "/budget" },
-  { icon: AlertTriangle, label: "Cảnh báo", path: "/alerts" },
+  // { icon: AlertTriangle, label: "Cảnh báo", path: "/alerts" },
   { icon: BarChart3, label: "Thống kê công việc", path: "/work-statistics" },
   { icon: TrendingUp, label: "Thống kê kinh doanh", path: "/business-statistics" },
   // { icon: UserCheck, label: "Hồ sơ nhân sự", path: "/hr-profile" },

@@ -1,6 +1,7 @@
 import { handleError } from "@/utils/error";
 import api from "./api";
 import {
+  Budget,
   LinkSystem,
   Profit,
   TargetRevenue,
@@ -172,6 +173,56 @@ const systemService = {
       throw error;
     }
   },
+   createBudget: async (data: Budget) => {
+      try {
+        const response = await api.post(`/system/budget`, data);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+  
+    // Update an existing type method
+    updateBudget: async (id: string, data: Budget) => {
+      try {
+        const response = await api.put(`/system/budget/${id}`, data);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    getBudget: async (id:string) => {
+      try {
+        const response = await api.get(`/system/budget/${id}`);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+  
+    // Get all type methods
+    getAllBudgets: async (filters?:{date_start?:string,date_end?:string}) => {
+      try {
+        const queryParams = new URLSearchParams();
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value);
+          }
+        });
+      }
+        const response = await api.get(`/system/budget?${queryParams.toString()}`);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+  
 };
 
 export default systemService;

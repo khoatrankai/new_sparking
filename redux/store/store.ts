@@ -65,6 +65,7 @@ import warrantiesSlice from "./slices/productSlices/get_all_warranty.slice";
 import roleProjectSlice from "./slices/projectSlices/get_role.slice";
 import workFilterByUserSlice from "./slices/activitySlices/work_filter_by_user.slide";
 import tagWorkSlice from "./slices/activitySlices/get_all_tag.slice";
+import budgetSystemSlice from "./slices/systemSlices/get_budget.slice";
 
 export const store = configureStore({
   reducer: {
@@ -75,6 +76,7 @@ export const store = configureStore({
     asset_product: assetsProductSlice,
     get_contractors: contractorsProjectSlice,
     vat_system: vatSystemSlice,
+    budget_system: budgetSystemSlice,
     info_products: infoProductSlice,
     about_product: aboutProductSlice,
     infos_customer: customerInfoSlice,

@@ -988,6 +988,54 @@ const activityService = {
     }
   },
 
+  dashboardWorkByFilter: async (filter?: {
+  date_start?: string;  // timestamp string, ví dụ "1719766800000"
+  date_end?: string;    // timestamp string
+  project?: string;
+  contract?: string;
+  activity?: string;
+}) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+      const response = await api.get(`/activity/dashboard-work-filter?${queryParams.toString()}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+dashboardTypeWorkByFilter: async (filter?: {
+  date_start?: string;  // timestamp string, ví dụ "1719766800000"
+  date_end?: string;    // timestamp string
+  project?: string;
+  contract?: string;
+  activity?: string;
+}) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+      const response = await api.get(`/activity/dashboard-type-work-filter?${queryParams.toString()}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
   dashboardActivity: async (id: string) => {
     try {
       const response = await api.get(`/activity/dashboard-activity/${id}`);
