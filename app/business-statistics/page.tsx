@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, TrendingUp, Calendar, Trash2 } from "lucide-react"
 import dynamic from "next/dynamic";
 import contractService from "@/services/contractService."
+import { IGetTypeContract } from "@/models/contractInterface"
 
 const PieChart3D = dynamic(() => import("../../components/ui/pie-chart-3D"), {
   ssr: false,
@@ -30,18 +31,25 @@ export default function BusinessStatisticsPage() {
     { month: "Tháng 12", value: 75 },
   ])
   const [hcmData,setDataHcm] = useState<any>([])
+  const [dataTypeContract,setDataTypeContract] = useState<IGetTypeContract[]>()
   const [totalRevenue,setTotalRevenue] = useState<number>()
   const [revenueHcm,setRevenueHcm] = useState<number>()
   const [revenueHn,setRevenueHn] = useState<number>()
   const [profitHcm,setProfitHcm] = useState<number>()
   const [profitHn,setProfitHn] = useState<number>()
   const [searchQuery, setSearchQuery] = useState("")
-const dataPie = [
-    { category: "Chủ đầu tư", value: 50 },
-    { category: "Công ty cổ điển", value: 35 },
-    { category: "Đối tác", value: 15 },
-    { category: "Nội bộ", value: 5 },
-  ];
+// const dataPie = [
+//     { category: "Chủ đầu tư", value: 50 },
+//     { category: "Công ty cổ điển", value: 35 },
+//     { category: "Đối tác", value: 15 },
+//     { category: "Nội bộ", value: 5 },
+//   ];
+const dataPie = dataTypeContract?.map((dt) =>{
+  return{
+    category:dt?.name_type ?? "",
+    value:dt?.contracts?.length ?? 0
+  }
+})
   // Revenue data
   // const revenueData = {
   //   totalRevenue: "6.719.576.000",
@@ -157,6 +165,11 @@ const dataPie = [
         return {...dt,value:0}
       })
     })
+
+    const resTypeContract = await contractService.getTypeFullContracts()
+    if(resTypeContract?.statusCode === 200){
+      setDataTypeContract(resTypeContract?.data)
+    }
   }
   useEffect(()=>{
     fetchData()
@@ -432,7 +445,7 @@ const dataPie = [
                     })()}
                   </svg>
                 </div> */}
-                <PieChart3D data={dataPie} />
+                <PieChart3D data={dataPie || []} />
                 {/* Legend */}
                 {/* <div className="w-full max-w-xs space-y-3">
                   {fundingSources.map((item, index) => (

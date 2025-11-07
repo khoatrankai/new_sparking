@@ -343,7 +343,49 @@ const userService = {
       handleError(error);
       throw error;
     }
-  }
+  },
+   getUserFilter: async (filters?: {
+      time_start?: number;
+      time_end?: number;
+    }) => {
+      try {
+        const queryParams = new URLSearchParams();
+  
+        if (filters) {
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              queryParams.append(key, value.toString());
+            }
+          });
+        }
+        const response = await api.get(`/user/filter-all?${queryParams.toString()}`);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    getTimekeepingFilter: async (filters?: {
+      time_start?: number;
+      time_end?: number;
+    }) => {
+      try {
+        const queryParams = new URLSearchParams();
+  
+        if (filters) {
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              queryParams.append(key, value.toString());
+            }
+          });
+        }
+        const response = await api.get(`/user/filter-timekeeping?${queryParams.toString()}`);
+        return response.data;
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
 };
 
 export default userService;

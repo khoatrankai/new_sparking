@@ -3,26 +3,28 @@ import React, { useEffect, useState } from 'react';
 import { Pie } from '@ant-design/plots';
 import contractService from '@/services/contractService.';
 import { useParams } from 'next/navigation';
+import projectService from '@/services/projectService';
 
-export const ChartPie = () => {
-  const {id} = useParams()
+export const PieChartProjectYear = () => {
   const [dataDashboard,setDataDashboard] = useState<any>()
   const fetchData = async ()=>{
-    const res = await contractService.getContractDashboardByProject(id as string)
+    const yearCurrent = new Date().getFullYear()
+    const res = await projectService.getFilterProject({time_start:new Date(`${yearCurrent}-01-01`).getTime(),time_end:new Date(`${yearCurrent}-12-31`).getTime()})
     if(res.statusCode === 200){
+      console.log(res)
       setDataDashboard(res.data)
     }
   }
   useEffect(()=>{
       fetchData()
     
-  },[id])
+  },[])
   const config = {
     data: [
-      { type: 'Hoàn tất', value: dataDashboard?.completed ?? 0 },
-      { type: 'Tạm dừng', value: dataDashboard?.hide ?? 0 },
-      { type: 'Đang thực hiện', value: dataDashboard?.active ?? 0 },
-      { type: 'Đã hủy', value: dataDashboard?.delete ?? 0 },
+      { type: 'Hoàn tất', value: dataDashboard?.filter((dt:any) => dt.status === "completed")?.length },
+      { type: 'Tạm dừng', value: dataDashboard?.filter((dt:any) => dt.status === "pause")?.length  },
+      { type: 'Đang thực hiện', value: dataDashboard?.filter((dt:any) => dt.status === "start" || dt.status === "waiting")?.length},
+      { type: 'Đã hủy', value: dataDashboard?.filter((dt:any) => dt.status === "cancel")?.length },
     ],
     angleField: 'value',
     colorField: 'type',
@@ -41,7 +43,7 @@ export const ChartPie = () => {
       {
         type: 'text',
         style: {
-          text: `${(dataDashboard?.completed??0)/(dataDashboard?.total ?? 1)*100}`+'%',
+          text: `${(dataDashboard?.filter((dt:any) => dt.status === "completed")?.length)*100/(dataDashboard?.length === 0 ?1 : dataDashboard?.length)}`+'%',
           x: '50%',
           y: '50%',
           textAlign: 'center',

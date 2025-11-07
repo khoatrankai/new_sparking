@@ -1435,6 +1435,36 @@ dashboardTypeWorkByFilter: async (filter?: {
       throw error;
     }
   },
+   getUserWork: async () => {
+    try {
+      const response = await api.get("/activity/user-work");
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
+   getWorkCompleted: async (filters?: {
+    time_start?: number;
+    time_end?: number;
+  }) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+      const response = await api.get(`/activity/work-completed?${queryParams.toString()}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
 };
 
 export default activityService;

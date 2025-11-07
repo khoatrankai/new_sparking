@@ -30,6 +30,30 @@ const projectService = {
       throw error;
     }
   },
+   getFilterProject: async (filters?: {
+    time_start?: number;
+    time_end?: number;
+  }) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+
+      const response = await api.get(
+        `/project/filter-all?${queryParams.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      throw error;
+    }
+  },
   getProjectAbout: async () => {
     try {
       const response = await api.get(`/project/about`);
