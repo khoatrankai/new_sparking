@@ -113,7 +113,9 @@ const Header = () => {
      <div className="min-h-16 z-50 relative">
       <div className="h-16 bg-white flex justify-between items-center fixed inset-x-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px]">
           <header className="bg-primary text-primary-foreground px-6 py-3 flex items-center justify-between shadow-sm w-full">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 cursor-pointer" onClick={()=>{
+          window.location.href = '/'
+        }}>
           <div className="flex items-center gap-3">
             <div className="h-12 flex items-center justify-center">
               <img src="/s-logo.png" alt="S Logo" className="h-12 object-contain" />

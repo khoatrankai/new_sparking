@@ -20,7 +20,7 @@ import React, { useState } from "react";
 
 // type MenuItem = Required<MenuProps>["items"][number];
 const sidebarItems = [
-  { icon: List, label: "Công việc", path: "/", hasSubmenu: true },
+  { icon: List, label: "Công việc", path: "/work", hasSubmenu: true },
   { icon: BarChart3, label: "Dự án", path: "/project" },
   { icon: Clock, label: "Lịch trình", path: "/schedule" },
   { icon: FileText, label: "Báo cáo", path: "/reports" },
@@ -108,7 +108,7 @@ const Sidebar = () => {
   }
 
   const getActiveMenu = () => {
-    if (pathname === "/") return "Công việc"
+    // if (pathname === "/") return "Công việc"
     if (pathname === "/work") return "Công việc"
     if (pathname === "/project") return "Dự án"
     if (pathname === "/schedule") return "Lịch trình"
